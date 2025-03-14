@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Font Identifier</h1>
+    <div class="toggle-container">
+      <label class="switch">
+        <input type="checkbox" id="toggle">
+        <span class="slider"></span>
+      </label>
+      <span id="status">Inactive</span>
+    </div>
+    <!-- Add to existing popup -->
+    <div class="history-panel">
+        <h3>Recent Fonts</h3>
+        <div class="history-list"></div>
+    </div>
+    
+    <div class="bookmarks-panel">
+        <h3>Saved Fonts</h3>
+        <div class="bookmarks-list"></div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

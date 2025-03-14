@@ -1,0 +1,24 @@
+.history-panel {
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+    padding-top: 15px;
+  }
+  
+  .history-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .history-item {
+    padding: 8px;
+    margin: 5px 0;
+    background: #f5f6fa;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .history-item:hover {
+    background: #eef1f7;
+  }
