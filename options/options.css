@@ -1,0 +1,47 @@
+.container {
+    width: 400px;
+    padding: 20px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  
+  section {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+  
+  h2 {
+    font-size: 1.1em;
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+  }
+  
+  label {
+    display: block;
+    margin: 10px 0;
+  }
+  
+  input[type="checkbox"] {
+    margin-right: 8px;
+  }
+  
+  select {
+    margin-left: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  
+  #save {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+  }
+  
+  #save:hover {
+    background: #2980b9;
+  }

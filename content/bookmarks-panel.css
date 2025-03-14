@@ -1,0 +1,26 @@
+.bookmarks-panel {
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+    padding-top: 15px;
+  }
+  
+  .bookmarks-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .bookmark-item {
+    padding: 8px;
+    margin: 5px 0;
+    background: #fff3e0;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .remove-bookmark {
+    color: #e74c3c;
+    cursor: pointer;
+    margin-left: 10px;
+  }
