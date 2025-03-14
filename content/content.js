@@ -1,109 +1,104 @@
 let isActive = false;
 let tooltip = null;
 let fontHistory = [];
-let lastPosition = null;
-
 const MAX_HISTORY = 20;
 
+// Throttle function to prevent excessive updates
+function throttle(func, limit) {
+    let lastFunc, lastRan;
+    return function () {
+        const context = this, args = arguments;
+        if (!lastRan) {
+            func.apply(context, args);
+            lastRan = Date.now();
+        } else {
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(() => {
+                if ((Date.now() - lastRan) >= limit) {
+                    func.apply(context, args);
+                    lastRan = Date.now();
+                }
+            }, limit - (Date.now() - lastRan));
+        }
+    };
+}
+
+// Update tooltip based on mouse movement
 const updateTooltip = throttle((e) => {
     if (!isActive) return;
-    // Existing logic
-  }, 50);
+    const currentElement = document.elementFromPoint(e.clientX, e.clientY);
+    if (currentElement && currentElement !== tooltip) {
+        const styles = window.getComputedStyle(currentElement);
+        if (tooltip) removeTooltip();
+        createTooltip(currentElement, styles);
+    }
+}, 50);
 
-
+// Listen for messages from the background script
 chrome.runtime.onMessage.addListener((message) => {
-  isActive = message.active;
-  if (!isActive) removeTooltip();
+    isActive = message.active;
+    if (!isActive) removeTooltip();
 });
 
+// Create tooltip element
 function createTooltip(element, styles) {
-  const rect = element.getBoundingClientRect();
-  tooltip = document.createElement('div');
-  tooltip.className = 'font-tooltip';
-  
-  tooltip.innerHTML = `
-    <div class="font-property">
-      <span class="label">Font:</span>
-      <span class="value">${styles.fontFamily}</span>
-    </div>
-    <div class="font-property">
-      <span class="label">Size:</span>
-      <span class="value">${styles.fontSize}</span>
-    </div>
-    <div class="font-property">
-      <span class="label">Weight:</span>
-      <span class="value">${styles.fontWeight}</span>
-    </div>
-    <div class="font-property">
-      <span class="label">Color:</span>
-      <span class="value" style="color:${styles.color}">${styles.color}</span>
-    </div>
-  `;
+    const rect = element.getBoundingClientRect();
+    tooltip = document.createElement('div');
+    tooltip.className = 'font-tooltip';
 
-  tooltip.style.position = 'absolute';
-  tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
-  tooltip.style.left = `${rect.left + window.scrollX + 10}px`;
-  
-  document.body.appendChild(tooltip);
+    tooltip.innerHTML = `
+      <div class="font-property">
+        <span class="label">Font:</span>
+        <span class="value">${styles.fontFamily}</span>
+      </div>
+      <div class="font-property">
+        <span class="label">Size:</span>
+        <span class="value">${styles.fontSize}</span>
+      </div>
+      <div class="font-property">
+        <span class="label">Weight:</span>
+        <span class="value">${styles.fontWeight}</span>
+      </div>
+      <div class="font-property">
+        <span class="label">Color:</span>
+        <span class="value" style="color:${styles.color}">${styles.color}</span>
+      </div>
+    `;
+
+    tooltip.style.position = 'absolute';
+    tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
+    tooltip.style.left = `${rect.left + window.scrollX + 10}px`;
+
+    document.body.appendChild(tooltip);
+    enhanceTooltip(styles);
 }
 
+// Remove tooltip from DOM
 function removeTooltip() {
-  if (tooltip) {
-    tooltip.remove();
-    tooltip = null;
-  }
+    if (tooltip) {
+        tooltip.remove();
+        tooltip = null;
+    }
 }
 
-document.addEventListener('mousemove', (e) => {
-  if (!isActive) return;
-  
-  const element = document.elementFromPoint(e.clientX, e.clientY);
-  if (element && element !== tooltip) {
-    const styles = window.getComputedStyle(element);
-    if (tooltip) removeTooltip();
-    createTooltip(element, {
-      fontFamily: styles.fontFamily,
-      fontSize: styles.fontSize,
-      fontWeight: styles.fontWeight,
-      color: styles.color
-    });
-  }
-});
-
+// Add event listeners
 document.addEventListener('mousemove', updateTooltip);
-
-    // Use CSS containments
-    .font-tooltip {
-    contain: strict;
-    will-change: transform;
-    }
-
-    // Virtualize history lists
-    class VirtualList {
-    constructor(container, items, renderItem) {
-        // Implement virtualization
-    }
-    }
-
 document.addEventListener('click', (e) => {
-  if (isActive && tooltip) e.preventDefault();
+    if (isActive && tooltip) e.preventDefault();
 });
 
-function enhanceTooltip(element, styles) {
-    // Font Preview Section
+// Enhance tooltip with contrast and font preview
+function enhanceTooltip(styles) {
     const preview = document.createElement('div');
     preview.className = 'font-preview';
     preview.style.fontFamily = styles.fontFamily;
     preview.textContent = 'Sample Text 123';
-    
-    // Contrast Ratio Calculation
+
     const bgColor = getContrastColor(styles.backgroundColor);
     const contrastRatio = getContrastRatio(styles.color, bgColor);
-    
-    // Service Integration
+
     const serviceLinks = getFontServiceLinks(styles.fontFamily);
-  
-    // Add to tooltip HTML
+
     tooltip.innerHTML += `
       <div class="font-property">
         <span class="label">Preview:</span>
@@ -119,44 +114,46 @@ function enhanceTooltip(element, styles) {
         <button class="bookmark-font">★ Bookmark</button>
       </div>
     `;
-  
-    // Add interaction handlers
+
+    // Add event listener to copy CSS
     tooltip.querySelector('.copy-css').addEventListener('click', () => {
-      copyToClipboard(`font-family: ${styles.fontFamily};
-  font-size: ${styles.fontSize};
-  font-weight: ${styles.fontWeight};
-  color: ${styles.color};`);
+        copyToClipboard(`
+            font-family: ${styles.fontFamily};
+            font-size: ${styles.fontSize};
+            font-weight: ${styles.fontWeight};
+            color: ${styles.color};
+        `);
     });
-  
-    tooltip.querySelector('.bookmark-font').addEventListener('click', () => {
-      chrome.runtime.sendMessage({
-        action: 'bookmarkFont',
-        font: styles.fontFamily,
-        details: styles
-      });
-    });
-  
-    // Update history
+
+    // Save font to history
     fontHistory.unshift({
-      font: styles.fontFamily,
-      time: new Date().toISOString(),
-      styles
+        font: styles.fontFamily,
+        time: new Date().toISOString(),
+        styles
     });
     fontHistory = fontHistory.slice(0, MAX_HISTORY);
     chrome.storage.local.set({ fontHistory });
-  }
-  
-  // Contrast utilities
-  function getContrastRatio(color1, color2) {
-    // Implement WCAG contrast calculation
-  }
-  
-  function getContrastColor(bgColor) {
-    // Get appropriate contrasting text color
-  }
-  
-  function getFontServiceLinks(fontFamily) {
-    // Generate service links
+}
+
+// Utility: Copy text to clipboard
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('CSS copied to clipboard!');
+    }).catch((err) => console.error('Copy failed', err));
+}
+
+// Utility: Calculate contrast ratio
+function getContrastRatio(color1, color2) {
+    return '4.5'; // Placeholder for actual WCAG contrast calculation
+}
+
+// Utility: Determine appropriate contrast color
+function getContrastColor(bgColor) {
+    return '#FFFFFF'; // Placeholder for logic to calculate contrast color
+}
+
+// Generate font service links
+function getFontServiceLinks(fontFamily) {
     return `
       <a href="https://fonts.google.com/?query=${encodeURIComponent(fontFamily)}" 
          target="_blank" class="service-link google-fonts">
@@ -167,17 +164,4 @@ function enhanceTooltip(element, styles) {
         View in Adobe Fonts
       </a>
     `;
-  }
-
-  // Add to content.js
-function getAccessibilityInfo(element, styles) {
-    const contrast = getContrastRatio(styles.color, styles.backgroundColor);
-    const fontSize = parseFloat(styles.fontSize);
-    const lineHeight = parseFloat(styles.lineHeight) || fontSize * 1.2;
-    
-    return {
-      contrastRating: contrast >= 4.5 ? 'AA' : contrast >= 7 ? 'AAA' : 'Fail',
-      readableSize: fontSize >= 16 ? 'Good' : 'Consider increasing',
-      lineHeightRating: lineHeight/fontSize >= 1.5 ? 'Good' : 'Could improve'
-    };
-  }
+}
