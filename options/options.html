@@ -1,46 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Font Detector Options</title>
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Font Identifier Settings</h1>
-    
-    <section>
-      <h2>Tooltip Settings</h2>
-      <label>
-        <input type="checkbox" id="showPreview"> Show font preview
-      </label>
-      <label>
-        Tooltip Position:
-        <select id="tooltipPosition">
-          <option value="top">Top</option>
-          <option value="bottom">Bottom</option>
-          <option value="cursor">Follow Cursor</option>
-        </select>
-      </label>
-    </section>
-
-    <section>
-      <h2>Font Services</h2>
-      <label>
-        <input type="checkbox" id="enableGoogleFonts"> Google Fonts integration
-      </label>
-      <label>
-        <input type="checkbox" id="enableAdobeFonts"> Adobe Fonts integration
-      </label>
-    </section>
-
-    <section>
-      <h2>Sync & Storage</h2>
-      <label>
-        <input type="checkbox" id="enableSync"> Enable cross-browser sync
-      </label>
-    </section>
-    
-    <button id="save">Save Settings</button>
+  <h1>Extension Settings</h1>
+  <div class="setting">
+    <label>
+      <input type="checkbox" id="trackUsage">
+      Track font usage statistics
+    </label>
   </div>
+  <div class="setting">
+    <label>
+      <input type="checkbox" id="showPreview">
+      Show font previews
+    </label>
+  </div>
+  <button id="saveBtn">Save Settings</button>
   <script src="options.js"></script>
 </body>
 </html>

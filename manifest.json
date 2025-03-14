@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Font Identifier",
+    "name": "Font Detector",
     "version": "1.0.0",
     "description": "Identify fonts on web pages",
     "icons": {
@@ -13,7 +13,8 @@
       "activeTab"
     ],
     "host_permissions": [
-      "https://*.googleapis.com/*",
+      "https://fonts.googleapis.com/*",
+      "https://fonts.adobe.com/*",
       "https://typekit.com/*"
     ],
     "options_page": "options/options.html",
@@ -21,7 +22,7 @@
       "default_popup": "popup/popup.html",
       "default_icon": {
         "16": "icons/favicon.png",
-      "48": "icons/iconn.png"
+        "48": "icons/iconn.png"
       }
     },
     "content_scripts": [
