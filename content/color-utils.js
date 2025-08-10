@@ -1,20 +1,23 @@
 function parseColor(color) {
-    if (color.startsWith('#')) {
-      const hex = color.slice(1);
-      return [
-        parseInt(hex.slice(0, 2), 
-        parseInt(hex.slice(2, 4),
-        parseInt(hex.slice(4, 6))
-      ].map(v => v / 255);
-    }
-    
-    if (color.startsWith('rgb')) {
-      return color.match(/\d+/g).map(Number).slice(0, 3)
-        .map(v => v / 255);
-    }
-    
-    return [0, 0, 0]; // Fallback
+  if (color.startsWith('#')) {
+    const hex = color.slice(1);
+    return [
+      parseInt(hex.slice(0, 2), 16),
+      parseInt(hex.slice(2, 4), 16),
+      parseInt(hex.slice(4, 6), 16)
+    ].map((v) => v / 255);
   }
+
+  if (color.startsWith('rgb')) {
+    return color
+      .match(/\d+/g)
+      .map(Number)
+      .slice(0, 3)
+      .map((v) => v / 255);
+  }
+
+  return [0, 0, 0]; // Fallback
+}
   
   function getLuminance(rgb) {
     const [r, g, b] = rgb.map(v => 
